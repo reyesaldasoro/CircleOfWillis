@@ -102,6 +102,20 @@ baseVasculature1            = max(vasculature.vesselsL(:,:,1:20),[],3);
 baseVasculature2            = max(vasculature.vesselsL(:,:,1:60),[],3);
 baseProps1                   = regionprops(baseVasculature1,'area','boundingbox','centroid');
 baseProps2                   = regionprops(baseVasculature2,'area','boundingbox','centroid');
+%% Display options for an app
+dataDouble                  = double(currFileData);
+maxIntensityRaw             = max(dataDouble(:));
+vasculature.rows            = rows;
+vasculature.cols            = cols;
+
+sagD                        = permute(uint8(255*dataDouble/maxIntensityRaw),[3 1 2]);
+corD                        = permute(uint8(255*dataDouble/maxIntensityRaw),[3 2 1]);
+vasculature.maxIntensity2   = uint8(255*max(dataDouble,[],3)/maxIntensityRaw);
+vasculature.maxIntensityS   = max(sagD(end:-1:1,:,:),[],3);
+vasculature.maxIntensityC   = max(corD(end:-1:1,:,:),[],3);
+vasculature.scaledData      = uint8(255*vasculature.rawData/(0.9*maxIntensityRaw));
+vasculature
+    
 
 %%
 if numel(baseProps2) ==1
