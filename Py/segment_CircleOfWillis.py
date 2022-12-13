@@ -13,7 +13,7 @@ import nibabel as nib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from skimage.morphology import (square, rectangle, diamond, disk, cube,
-                                octahedron, ball, octagon, star,label)
+                                octahedron, ball, octagon, star, label)
 from skimage.morphology import disk, binary_dilation
 from skimage import measure
 
@@ -38,6 +38,7 @@ thresSet                        = [0.55, 0.45, 0.35, 0.25, 0.15]
 for k in thresSet:
     print(k)
     currentROIs                 = label((niftidata2>k)*(niftidata2<=(k+0.1)))
+    
     #currentROIS_P1              = measure.regionprops_table(currentROIs, properties=['area'])
     #regionsToKeep1              = np.unique(currentROIs*seedRegions)
     #regionsToKeep2              = regionsToKeep1[1:]
