@@ -7,12 +7,15 @@ Created on Mon Dec 12 14:45:27 2022
 
 from tkinter import *
 from PIL import ImageTk, Image
+from segment_CircleOfWillis import segment_CircleOfWillis
+
 
 import os
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
+from tkinter.filedialog import askopenfilename
 
 global data 
 #from nibabel.testing import data_path
@@ -33,7 +36,7 @@ def button_up():
     slice_2 = data[:, :, int(e.get())]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
-    myLabel.grid(row=0, column=1,columnspan=7)
+    myLabel.grid(row=1, column=1,columnspan=7)
     
 def button_up_double():
     global myImage   
@@ -50,10 +53,9 @@ def button_up_double():
     slice_2 = data[:, :, int(e.get())]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
-    myLabel.grid(row=0, column=1,columnspan=7)
+    myLabel.grid(row=1, column=1,columnspan=7)
 
-def changeSlice():
-    return
+
 
 def button_down():
     global myImage   
@@ -68,7 +70,7 @@ def button_down():
     slice_2 = data[:, :, int(e.get())]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
-    myLabel.grid(row=0, column=1,columnspan=7)
+    myLabel.grid(row=1, column=1,columnspan=7)
 
 def button_down_double():
     global myImage   
@@ -83,32 +85,90 @@ def button_down_double():
     slice_2 = data[:, :, int(e.get())]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
-    myLabel.grid(row=0, column=1,columnspan=7)
+    myLabel.grid(row=1, column=1,columnspan=7)
     
+
+# read the data
+def button_read():
+    global data
+    global myImage   
+    global myLabel     
+    global Ax_MIP_image
+    global Sag_MIP_image
+    global Cor_MIP_image
+    global Ax_MIP_Label
+    global Sag_MIP_Label
+    global Cor_MIP_Label    
+    global maxLabel
+    
+    filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+    #print(filename)
+    img       = nib.load(filename)
+    fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2);
+    data      = img.get_fdata()
+    first_number = int(e.get())
+    slice_2   = data[:, :, int(e.get())]
+    myLabel.grid_forget()
+
+    # replace image with new file
+    myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
+    myLabel       = Label(image=myImage)
+    myLabel.grid(row=1, column=1,columnspan=7)
+    
+    # recalculate maximum intensity projections
+    Ax_MIP = np.max(data, axis=2)
+    Sag_MIP= np.max(data, axis=1)
+    Cor_MIP= np.max(data, axis=0)
+
+    Sag_MIP = np.rot90(Sag_MIP, k=3, axes=(1,0))
+    Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
+    Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
+    Ax_MIP_Label  = Label(image=Ax_MIP_image)
+    Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
+    Sag_MIP_Label  = Label(image=Sag_MIP_image)
+    Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
+    Cor_MIP_Label  = Label(image=Cor_MIP_image)
+    Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
+    Sag_MIP_Label.grid(row=3, column=8,columnspan=1) 
+    Cor_MIP_Label.grid(row=3, column=9,columnspan=1)     
+    
+    dims     = data.shape
+    slices   = dims[2]
+    maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
+
+
 # start the window here    
 root = Tk()
 root.title("Circle of Willis")
 root.iconbitmap('CircleW.ico')
 
-# read the data
 
 
-from tkinter.filedialog import askopenfilename
-
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+#Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-print(filename)
+#print(filename)
+#img      = nib.load('TPH-001_V1.nii')
+img      = nib.load(filename)
 
-img      = nib.load('TPH-001_V1.nii')
+
 data     = img.get_fdata()
 dims     = data.shape
 slices   = dims[2]
+maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
+# display the current file
+fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2,sticky=W+E);
+
+#print(data.max())
+
+# button to read a different file
+button_read     = Button (root, text = "Read File",padx=10,pady=10, command=button_read)
+button_read.grid(row = 0, column=4);
 
 
 # define the slices and the environment to move up and down
 e = Entry(root, width = 10, borderwidth = 5,  fg="blue", bg="white")
 e.insert(0, "0")
-#e.grid(row = 0, column=6)
+
 
 
 #print(data[0:2,0:2,0])
@@ -124,6 +184,10 @@ Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
 
 #print(type(q))
 slice_2 = data[:, :, int(e.get())]
+slice_2S = segment_CircleOfWillis(slice_2)
+
+segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2S).resize((320,320)))
+segLabel       = Label(image=segImage)
 
 #plt.imshow(slice_2)
 #myImage = ImageTk.PhotoImage(Image.open("Circle_of_Willis.png"))
@@ -143,19 +207,21 @@ button_up_double     = Button (root, text = ">>",padx=10,pady=10, command=button
 button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button_down_double)
 
 
-myLabel.grid(row=0, column=1,columnspan=7)
-Ax_MIP_Label.grid(row=2, column=1,columnspan=7) 
-Sag_MIP_Label.grid(row=2, column=8,columnspan=1) 
-Cor_MIP_Label.grid(row=2, column=9,columnspan=1) 
+myLabel.grid(row=1, column=1,columnspan=7)
+segLabel.grid(row=1,column=8)
 
-button_down_double.grid(row=1, column=1)
-button_down.grid(row=1, column=2)
-button_up.grid(row=1, column=6)
-button_up_double.grid(row=1, column=7)
+Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
+Sag_MIP_Label.grid(row=3, column=8,columnspan=1) 
+Cor_MIP_Label.grid(row=3, column=9,columnspan=1) 
 
-e.grid(row = 1, column =4, padx = 10, pady= 10)
-minLabel = Label(root, text="0").grid(row = 1, column=3)
-maxLabel = Label(root, text=slices-1).grid(row = 1, column=5)
+button_down_double.grid(row=2, column=1)
+button_down.grid(row=2, column=2)
+button_up.grid(row=2, column=6)
+button_up_double.grid(row=2, column=7)
+
+e.grid(row = 2, column =4, padx = 10, pady= 10)
+minLabel = Label(root, text="0").grid(row = 2, column=3)
+maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
 
 
 
