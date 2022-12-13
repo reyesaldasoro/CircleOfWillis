@@ -114,7 +114,7 @@ vasculature.maxIntensity2   = uint8(255*max(dataDouble,[],3)/maxIntensityRaw);
 vasculature.maxIntensityS   = max(sagD(end:-1:1,:,:),[],3);
 vasculature.maxIntensityC   = max(corD(end:-1:1,:,:),[],3);
 vasculature.scaledData      = uint8(255*vasculature.rawData/(0.9*maxIntensityRaw));
-vasculature
+
     
 
 %%
