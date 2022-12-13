@@ -84,20 +84,33 @@ def button_down_double():
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=0, column=1,columnspan=7)
+    
+# start the window here    
 root = Tk()
 root.title("Circle of Willis")
 root.iconbitmap('CircleW.ico')
 
-e = Entry(root, width = 10, borderwidth = 5,  fg="blue", bg="white")
-e.insert(0, "0")
-#e.grid(row = 0, column=6)
+# read the data
 
 
+from tkinter.filedialog import askopenfilename
+
+Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+print(filename)
 
 img      = nib.load('TPH-001_V1.nii')
 data     = img.get_fdata()
 dims     = data.shape
 slices   = dims[2]
+
+
+# define the slices and the environment to move up and down
+e = Entry(root, width = 10, borderwidth = 5,  fg="blue", bg="white")
+e.insert(0, "0")
+#e.grid(row = 0, column=6)
+
+
 #print(data[0:2,0:2,0])
 
 
