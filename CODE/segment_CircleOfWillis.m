@@ -15,7 +15,7 @@ if ~exist('toDisplay','var')
 end
 
 
-
+%%
 [rows,cols,levs]                = size(currFileData);
 %% Normalise and crop
 currFileROI                     = double(currFileData)/max(double(currFileData(:)));
@@ -64,7 +64,7 @@ for k=1:levs
 
 end
 %vasculature2                = bwmorph3(vasculature,'clean');
-
+%%
 vasculature_L               = bwlabeln(vasculature0);
 vasculature_P               = regionprops3(vasculature_L,'Volume');
 vasculature2                = ismember(vasculature_L,find([vasculature_P.Volume]>10));
