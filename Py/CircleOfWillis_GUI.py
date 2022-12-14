@@ -9,7 +9,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 from segment_CircleOfWillis import segment_CircleOfWillis
 
-
+import plotly.graph_objects as go
 import os
 import numpy as np
 import nibabel as nib
@@ -184,10 +184,19 @@ Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
 
 #print(type(q))
 slice_2 = data[:, :, int(e.get())]
-slice_2S = segment_CircleOfWillis(slice_2)
+vasculature0 = segment_CircleOfWillis(data)
+rows,cols,levs = vasculature0.shape
+step=2
+X, Y, Z = np.mgrid[85:485:step,70:490:step, 0:levs:1]
+X2=X.flatten()
+Y2=Y.flatten()
+Z2=Z.flatten()
+values=vasculature0[85:485:step,70:490:step,0:levs].flatten()
+fig = go.Figure(data=go.Isosurface(x=X2,y=Y2,z=Z2,value=values,isomin=0.6,isomax=10, opacity=0.5,showscale=False, caps=dict(x_show=False, y_show=False)))
+fig.write_html('vasculature.html', auto_open=True)
 
-segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2S).resize((320,320)))
-segLabel       = Label(image=segImage)
+#segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2S).resize((320,320)))
+#segLabel       = Label(image=segImage)
 
 #plt.imshow(slice_2)
 #myImage = ImageTk.PhotoImage(Image.open("Circle_of_Willis.png"))
@@ -208,7 +217,7 @@ button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button
 
 
 myLabel.grid(row=1, column=1,columnspan=7)
-segLabel.grid(row=1,column=8)
+#segLabel.grid(row=1,column=8)
 
 Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
 Sag_MIP_Label.grid(row=3, column=8,columnspan=1) 
