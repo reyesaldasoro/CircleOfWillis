@@ -61,7 +61,7 @@ def segment_CircleOfWillis(niftidata0):
     
     print(vasculature0[100:105,100:105,1])
     b=1
-    return b
+    return vasculature0
     
 # from tkinter import *
 # from PIL import ImageTk, Image
