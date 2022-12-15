@@ -21,12 +21,31 @@ global data
 #from nibabel.testing import data_path
 #print(data_path)
 
+def slider_slices(self):
+    return
+    global myImage   
+    global myLabel     
+    myLabel.grid_forget()
+    first_number = int(slider_slices.get())
+    print(first_number)
+    if first_number>= (slices-1):
+         first_number = slices-2
+    e.delete(0,END)
+    e.insert(0,1+(first_number))
+
+    
+    # slice_2 = data[:, :, int(e.get())]
+    # myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
+    # myLabel       = Label(image=myImage)
+    # myLabel.grid(row=1, column=1,columnspan=7)
+
 def button_up():
     global myImage   
     global myLabel     
     myLabel.grid_forget()
     
     first_number = int(e.get())
+    print(first_number)
     if first_number>= (slices-1):
         first_number = slices-2
     e.delete(0,END)
@@ -37,6 +56,7 @@ def button_up():
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
+
     
 def button_up_double():
     global myImage   
@@ -145,9 +165,16 @@ root.iconbitmap('CircleW.ico')
 
 
 #Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-#print(filename)
+filename = askopenfilename(title="Select the *.nii file",filetypes=(("nifti files","*.nii"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
+#
 #img      = nib.load('TPH-001_V1.nii')
+if filename:
+    print(filename)
+else:
+    print(" No file Selected")    
+    #root.destroy()
+
+
 img      = nib.load(filename)
 
 
@@ -184,16 +211,18 @@ Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
 
 #print(type(q))
 slice_2 = data[:, :, int(e.get())]
-vasculature0 = segment_CircleOfWillis(data)
-rows,cols,levs = vasculature0.shape
-step=2
-X, Y, Z = np.mgrid[85:485:step,70:490:step, 0:levs:1]
-X2=X.flatten()
-Y2=Y.flatten()
-Z2=Z.flatten()
-values=vasculature0[85:485:step,70:490:step,0:levs].flatten()
-fig = go.Figure(data=go.Isosurface(x=X2,y=Y2,z=Z2,value=values,isomin=0.6,isomax=10, opacity=0.5,showscale=False, caps=dict(x_show=False, y_show=False)))
-fig.write_html('vasculature.html', auto_open=True)
+
+#*********** Calculate the vasculature here ********
+#vasculature0 = segment_CircleOfWillis(data)
+#rows,cols,levs = vasculature0.shape
+#step=2
+#X, Y, Z = np.mgrid[85:485:step,70:490:step, 0:levs:1]
+#X2=X.flatten()
+#Y2=Y.flatten()
+#Z2=Z.flatten()
+#values=vasculature0[85:485:step,70:490:step,0:levs].flatten()
+#fig = go.Figure(data=go.Isosurface(x=X2,y=Y2,z=Z2,value=values,isomin=0.6,isomax=10, opacity=0.5,showscale=False, caps=dict(x_show=False, y_show=False)))
+#fig.write_html('vasculature.html', auto_open=True)
 
 #segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2S).resize((320,320)))
 #segLabel       = Label(image=segImage)
@@ -214,7 +243,7 @@ button_up            = Button (root, text = ">",padx=10,pady=10, command=button_
 button_down          = Button (root, text = "<",padx=10,pady=10, command=button_down)
 button_up_double     = Button (root, text = ">>",padx=10,pady=10, command=button_up_double)
 button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button_down_double)
-
+slider_slices        = Scale  (root,from_=0,to=slices-1 , command=slider_slices)
 
 myLabel.grid(row=1, column=1,columnspan=7)
 #segLabel.grid(row=1,column=8)
@@ -227,7 +256,7 @@ button_down_double.grid(row=2, column=1)
 button_down.grid(row=2, column=2)
 button_up.grid(row=2, column=6)
 button_up_double.grid(row=2, column=7)
-
+slider_slices.grid(row=1, column=0)
 e.grid(row = 2, column =4, padx = 10, pady= 10)
 minLabel = Label(root, text="0").grid(row = 2, column=3)
 maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
