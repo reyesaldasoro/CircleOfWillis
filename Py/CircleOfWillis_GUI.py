@@ -21,23 +21,25 @@ global data
 #from nibabel.testing import data_path
 #print(data_path)
 
-def slider_slices(self):
+def slider_slices():
     return
     global myImage   
     global myLabel     
     myLabel.grid_forget()
-    first_number = int(slider_slices.get())
+    first_number = int(e.get())
     print(first_number)
     if first_number>= (slices-1):
          first_number = slices-2
     e.delete(0,END)
     e.insert(0,1+(first_number))
 
-    
-    # slice_2 = data[:, :, int(e.get())]
-    # myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
-    # myLabel       = Label(image=myImage)
-    # myLabel.grid(row=1, column=1,columnspan=7)
+    print("did this work? 1")
+    slice_2 = data[:, :, int(e.get())]
+    print("did this work? 2")
+    myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
+    myLabel       = Label(image=myImage)
+    myLabel.grid(row=1, column=1,columnspan=7)
+    print("did this work?")
 
 def button_up():
     global myImage   
@@ -64,6 +66,7 @@ def button_up_double():
     myLabel.grid_forget()
     
     first_number = int(e.get())
+    print(first_number)
     if first_number>= (slices-4):
         first_number = slices-6
     e.delete(0,END)
@@ -136,12 +139,12 @@ def button_read():
     myLabel.grid(row=1, column=1,columnspan=7)
     
     # recalculate maximum intensity projections
-    Ax_MIP = np.max(data, axis=2)
-    Sag_MIP= np.max(data, axis=1)
-    Cor_MIP= np.max(data, axis=0)
+    Ax_MIP        = np.max(data, axis=2)
+    Sag_MIP       = np.max(data, axis=1)
+    Cor_MIP       = np.max(data, axis=0)
 
-    Sag_MIP = np.rot90(Sag_MIP, k=3, axes=(1,0))
-    Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
+    Sag_MIP       = np.rot90(Sag_MIP, k=3, axes=(1,0))
+    Cor_MIP       = np.rot90(Cor_MIP, k=3, axes=(1,0))
     Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
     Ax_MIP_Label  = Label(image=Ax_MIP_image)
     Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
@@ -239,11 +242,11 @@ Sag_MIP_Label  = Label(image=Sag_MIP_image)
 Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
 Cor_MIP_Label  = Label(image=Cor_MIP_image)
 
-button_up            = Button (root, text = ">",padx=10,pady=10, command=button_up)
-button_down          = Button (root, text = "<",padx=10,pady=10, command=button_down)
+button_up            = Button (root, text = ">",padx=10,pady=10,  command=button_up)
+button_down          = Button (root, text = "<",padx=10,pady=10,  command=button_down)
 button_up_double     = Button (root, text = ">>",padx=10,pady=10, command=button_up_double)
 button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button_down_double)
-slider_slices        = Scale  (root,from_=0,to=slices-1 , command=slider_slices)
+slider_slices        = Scale  (root, from_= 0, to= slices-1 ,       command=slider_slices)
 
 myLabel.grid(row=1, column=1,columnspan=7)
 #segLabel.grid(row=1,column=8)
