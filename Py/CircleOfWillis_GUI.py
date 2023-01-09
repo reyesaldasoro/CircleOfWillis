@@ -21,25 +21,27 @@ global data
 #from nibabel.testing import data_path
 #print(data_path)
 
-def slider_slices():
-    return
+def slider_slices2(self):
     global myImage   
     global myLabel     
     myLabel.grid_forget()
-    first_number = int(e.get())
-    print(first_number)
+    #first_number = int(e.get())
+    #print(first_number)
+    
+    first_number = int(slider_slices.get())
+    
     if first_number>= (slices-1):
          first_number = slices-2
     e.delete(0,END)
     e.insert(0,1+(first_number))
 
-    print("did this work? 1")
+    #print("did this work? 1")
     slice_2 = data[:, :, int(e.get())]
-    print("did this work? 2")
+    #print("did this work? 2")
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
-    print("did this work?")
+    #print("did this work?")
 
 def button_up():
     global myImage   
@@ -47,11 +49,12 @@ def button_up():
     myLabel.grid_forget()
     
     first_number = int(e.get())
-    print(first_number)
+    #print(first_number)
     if first_number>= (slices-1):
         first_number = slices-2
     e.delete(0,END)
     e.insert(0,1+(first_number))
+
 
     
     slice_2 = data[:, :, int(e.get())]
@@ -66,12 +69,12 @@ def button_up_double():
     myLabel.grid_forget()
     
     first_number = int(e.get())
-    print(first_number)
+    #print(first_number)
     if first_number>= (slices-4):
         first_number = slices-6
     e.delete(0,END)
     e.insert(0,5+(first_number))
-
+    #slider_slices.set(4+(first_number))
     
     slice_2 = data[:, :, int(e.get())]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
@@ -246,7 +249,7 @@ button_up            = Button (root, text = ">",padx=10,pady=10,  command=button
 button_down          = Button (root, text = "<",padx=10,pady=10,  command=button_down)
 button_up_double     = Button (root, text = ">>",padx=10,pady=10, command=button_up_double)
 button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button_down_double)
-slider_slices        = Scale  (root, from_= 0, to= slices-1 ,       command=slider_slices)
+slider_slices        = Scale  (root, from_= 0, to= slices-1 ,     command=slider_slices2)
 
 myLabel.grid(row=1, column=1,columnspan=7)
 #segLabel.grid(row=1,column=8)
