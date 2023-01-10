@@ -6,7 +6,7 @@ Created on Mon Dec 12 14:45:27 2022
 """
 
 from tkinter import *
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageEnhance
 from segment_CircleOfWillis import segment_CircleOfWillis
 
 import plotly.graph_objects as go
@@ -145,15 +145,20 @@ def button_read():
     Ax_MIP        = np.max(data, axis=2)
     Sag_MIP       = np.max(data, axis=1)
     Cor_MIP       = np.max(data, axis=0)
-
+    # rotate sagittal and coronal
     Sag_MIP       = np.rot90(Sag_MIP, k=3, axes=(1,0))
     Cor_MIP       = np.rot90(Cor_MIP, k=3, axes=(1,0))
-    Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
-    Ax_MIP_Label  = Label(image=Ax_MIP_image)
+    # convert into an image from the array and resize
+    
+    Ax_MIP_image   = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
     Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
-    Sag_MIP_Label  = Label(image=Sag_MIP_image)
     Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
+    # pass to the labels
+    Ax_MIP_Label   = Label(image=Ax_MIP_image)
+    Sag_MIP_Label  = Label(image=Sag_MIP_image)
     Cor_MIP_Label  = Label(image=Cor_MIP_image)
+    
+    
     Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
     Sag_MIP_Label.grid(row=3, column=8,columnspan=1) 
     Cor_MIP_Label.grid(row=3, column=9,columnspan=1)     
@@ -242,8 +247,16 @@ Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320
 Ax_MIP_Label  = Label(image=Ax_MIP_image)
 Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
 Sag_MIP_Label  = Label(image=Sag_MIP_image)
-Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
+
+#Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
+Cor_MIP_preImage     = Image.fromarray(Cor_MIP).resize((320,120))
+Cor_MIP_image  = ImageTk.PhotoImage(image=Cor_MIP_preImage)
 Cor_MIP_Label  = Label(image=Cor_MIP_image)
+
+
+#filterB = ImageEnhance.Brightness(Cor_MIP_preImage)
+#Cor_MIP_preImage.filterB(0.5)
+
 
 button_up            = Button (root, text = ">",padx=10,pady=10,  command=button_up)
 button_down          = Button (root, text = "<",padx=10,pady=10,  command=button_down)
