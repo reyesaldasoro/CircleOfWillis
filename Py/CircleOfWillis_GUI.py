@@ -18,8 +18,6 @@ import matplotlib.pyplot as plt
 from tkinter.filedialog import askopenfilename
 
 global data 
-#from nibabel.testing import data_path
-#print(data_path)
 
 def slider_slices2(self):
     global myImage   
@@ -29,8 +27,6 @@ def slider_slices2(self):
     global segLabel
     
     myLabel.grid_forget()
-    #first_number = int(e.get())
-    #print(first_number)
     
     first_number = int(slider_slices.get())
     
@@ -40,13 +36,10 @@ def slider_slices2(self):
     e.insert(0,1+(first_number))
     new_number = int(e.get())
 
-    #print("did this work? 1")
     slice_2 = data[:, :, new_number]
-    #print("did this work? 2")
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
-    #print("did this work?")
     slice_3        = 250*vasculature0[:, :, new_number]
     segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
     segLabel       = Label(image=segImage)
@@ -62,7 +55,6 @@ def button_up():
     myLabel.grid_forget()
     
     first_number = int(e.get())
-    #print(first_number)
     if first_number>= (slices-1):
         first_number = slices-2
     e.delete(0,END)
@@ -90,14 +82,12 @@ def button_up_double():
     myLabel.grid_forget()
     
     first_number = int(e.get())
-    #print(first_number)
     if first_number>= (slices-4):
         first_number = slices-6
     e.delete(0,END)
     e.insert(0,5+(first_number))
     new_number = int(e.get())
 
-    #slider_slices.set(4+(first_number))
     
     slice_2 = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
@@ -179,7 +169,6 @@ def button_read():
     global maxLabel
     
     filename  = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-    #print(filename)
     img       = nib.load(filename)
     fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2);
     data      = img.get_fdata()
@@ -278,7 +267,6 @@ maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
 # display the current file
 fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2,sticky=W+E);
 
-#print(data.max())
 
 # button to read a different file
 button_read     = Button (root, text = "Read File",padx=10,pady=10, command=button_read)
@@ -294,7 +282,6 @@ e.insert(0, "0")
 
 
 
-#print(data[0:2,0:2,0])
 
 
 Ax_MIP = np.max(data, axis=2)
@@ -305,7 +292,6 @@ Sag_MIP = np.rot90(Sag_MIP, k=3, axes=(1,0))
 Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
 
 
-#print(type(q))
 slice_2 = data[:, :, int(e.get())]
 
 #*********** Calculate the vasculature here ********
