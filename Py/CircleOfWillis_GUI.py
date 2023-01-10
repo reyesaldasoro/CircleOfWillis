@@ -241,17 +241,18 @@ slice_2 = data[:, :, int(e.get())]
 #plt.imshow(slice_2)
 #myImage = ImageTk.PhotoImage(Image.open("Circle_of_Willis.png"))
 myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
-myLabel       = Label(image=myImage)
-
 Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
-Ax_MIP_Label  = Label(image=Ax_MIP_image)
 Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
-Sag_MIP_Label  = Label(image=Sag_MIP_image)
-
-#Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
 Cor_MIP_preImage     = Image.fromarray(Cor_MIP).resize((320,120))
 Cor_MIP_image  = ImageTk.PhotoImage(image=Cor_MIP_preImage)
+
+
+myLabel       = Label(image=myImage)
+Ax_MIP_Label  = Label(image=Ax_MIP_image)
+Sag_MIP_Label  = Label(image=Sag_MIP_image)
+#Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
 Cor_MIP_Label  = Label(image=Cor_MIP_image)
+
 
 
 #filterB = ImageEnhance.Brightness(Cor_MIP_preImage)
