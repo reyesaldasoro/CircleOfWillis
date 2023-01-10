@@ -24,6 +24,10 @@ global data
 def slider_slices2(self):
     global myImage   
     global myLabel     
+    global vasculature0
+    global segImage
+    global segLabel
+    
     myLabel.grid_forget()
     #first_number = int(e.get())
     #print(first_number)
@@ -34,18 +38,27 @@ def slider_slices2(self):
          first_number = slices-2
     e.delete(0,END)
     e.insert(0,1+(first_number))
+    new_number = int(e.get())
 
     #print("did this work? 1")
-    slice_2 = data[:, :, int(e.get())]
+    slice_2 = data[:, :, new_number]
     #print("did this work? 2")
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
     #print("did this work?")
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
 
 def button_up():
     global myImage   
     global myLabel     
+    global vasculature0
+    global segImage
+    global segLabel
+    
     myLabel.grid_forget()
     
     first_number = int(e.get())
@@ -54,18 +67,26 @@ def button_up():
         first_number = slices-2
     e.delete(0,END)
     e.insert(0,1+(first_number))
-
+    new_number = int(e.get())
 
     
-    slice_2 = data[:, :, int(e.get())]
+    slice_2 = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
-
+    
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
     
 def button_up_double():
     global myImage   
     global myLabel     
+    global vasculature0
+    global segImage
+    global segLabel
+    
     myLabel.grid_forget()
     
     first_number = int(e.get())
@@ -74,18 +95,28 @@ def button_up_double():
         first_number = slices-6
     e.delete(0,END)
     e.insert(0,5+(first_number))
+    new_number = int(e.get())
+
     #slider_slices.set(4+(first_number))
     
-    slice_2 = data[:, :, int(e.get())]
+    slice_2 = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
-
+    
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
 
 
 def button_down():
     global myImage   
     global myLabel     
+    global vasculature0
+    global segImage
+    global segLabel
+    
     myLabel.grid_forget()
 
     first_number = int(e.get())
@@ -93,14 +124,26 @@ def button_down():
         first_number = 1
     e.delete(0,END)
     e.insert(0,-1+(first_number))
-    slice_2 = data[:, :, int(e.get())]
+    new_number = int(e.get())
+
+    
+    slice_2 = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
-
+    
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
+    
 def button_down_double():
     global myImage   
     global myLabel     
+    global vasculature0
+    global segImage
+    global segLabel
+    
     myLabel.grid_forget()
 
     first_number = int(e.get())
@@ -108,11 +151,18 @@ def button_down_double():
         first_number = 5
     e.delete(0,END)
     e.insert(0,-5+(first_number))
-    slice_2 = data[:, :, int(e.get())]
+    new_number = int(e.get())
+
+    
+    slice_2 = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
     
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
 
 # read the data
 def button_read():
@@ -173,27 +223,26 @@ def segment_data():
     global data
     global filename
     global vasculature0
+    global segImage
+    global segLabel
+    
     # check that the data has not yet been segmented
-    new_name =filename[:-3]+'html'
+    #new_name =filename[:-3]+'html'
+    new_name = filename[:-3]+'npy'
     segmentation_exists = os.path.exists(new_name)
+    
     if (segmentation_exists):
-        qq = open(new_name)
-        qq2 = qq.read()
-        print(type(qq2))
+        vasculature0=np.load(new_name)
     else:
-        #print(new_name)
-        #print(segmentation_exists)
         vasculature0 = segment_CircleOfWillis(data)
-        print(type(vasculature0))
-        
-        rows,cols,levs = vasculature0.shape
+        np.save(new_name,vasculature0)
         
         
-        first_number = int(e.get())
-        slice_3 = vasculature0[:, :, first_number]
-        segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
-        segLabel       = Label(image=segImage)
-        segLabel.grid(row=1, column=8)
+    first_number = int(e.get())
+    slice_3        = 250*vasculature0[:, :, first_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
         
 
 
@@ -221,6 +270,8 @@ img      = nib.load(filename)
 
 
 data     = img.get_fdata()
+vasculature0=data/250
+
 dims     = data.shape
 slices   = dims[2]
 maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
