@@ -117,6 +117,7 @@ def button_down_double():
 # read the data
 def button_read():
     global data
+    global filename
     global myImage   
     global myLabel     
     global Ax_MIP_image
@@ -127,7 +128,7 @@ def button_read():
     global Cor_MIP_Label    
     global maxLabel
     
-    filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+    filename  = askopenfilename() # show an "Open" dialog box and return the path to the selected file
     #print(filename)
     img       = nib.load(filename)
     fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2);
@@ -168,6 +169,36 @@ def button_read():
     maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
 
 
+def segment_data():
+    global data
+    global filename
+    global vasculature0
+    # check that the data has not yet been segmented
+    new_name =filename[:-3]+'html'
+    segmentation_exists = os.path.exists(new_name)
+    if (segmentation_exists):
+        qq = open(new_name)
+        qq2 = qq.read()
+        print(type(qq2))
+    else:
+        #print(new_name)
+        #print(segmentation_exists)
+        vasculature0 = segment_CircleOfWillis(data)
+        print(type(vasculature0))
+        
+        rows,cols,levs = vasculature0.shape
+        
+        
+        first_number = int(e.get())
+        slice_3 = vasculature0[:, :, first_number]
+        segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+        segLabel       = Label(image=segImage)
+        segLabel.grid(row=1, column=8)
+        
+
+
+
+
 # start the window here    
 root = Tk()
 root.title("Circle of Willis")
@@ -201,6 +232,9 @@ fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=
 # button to read a different file
 button_read     = Button (root, text = "Read File",padx=10,pady=10, command=button_read)
 button_read.grid(row = 0, column=4);
+button_segment  = Button (root, text = "Segment Data",padx=10,pady=10, command=segment_data)
+button_segment.grid(row = 0, column=5);
+
 
 
 # define the slices and the environment to move up and down
@@ -233,25 +267,28 @@ slice_2 = data[:, :, int(e.get())]
 #Z2=Z.flatten()
 #values=vasculature0[85:485:step,70:490:step,0:levs].flatten()
 #fig = go.Figure(data=go.Isosurface(x=X2,y=Y2,z=Z2,value=values,isomin=0.6,isomax=10, opacity=0.5,showscale=False, caps=dict(x_show=False, y_show=False)))
-#fig.write_html('vasculature.html', auto_open=True)
+#write_name  = filename[:-3]+'html'
+#fig.write_html(write_name, auto_open=True)
 
 #segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2S).resize((320,320)))
 #segLabel       = Label(image=segImage)
 
 #plt.imshow(slice_2)
 #myImage = ImageTk.PhotoImage(Image.open("Circle_of_Willis.png"))
-myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
-Ax_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
-Sag_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
-Cor_MIP_preImage     = Image.fromarray(Cor_MIP).resize((320,120))
-Cor_MIP_image  = ImageTk.PhotoImage(image=Cor_MIP_preImage)
 
 
-myLabel       = Label(image=myImage)
-Ax_MIP_Label  = Label(image=Ax_MIP_image)
-Sag_MIP_Label  = Label(image=Sag_MIP_image)
+myImage           = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
+Ax_MIP_image      = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
+Sag_MIP_image     = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
+Cor_MIP_preImage  = Image.fromarray(Cor_MIP).resize((320,120))
+Cor_MIP_image     = ImageTk.PhotoImage(image=Cor_MIP_preImage)
+#vasc_image        = ImageTk.PhotoImage(image=vasc_pre_image)
+
+myLabel           = Label(image=myImage)
+Ax_MIP_Label      = Label(image=Ax_MIP_image)
+Sag_MIP_Label     = Label(image=Sag_MIP_image)
 #Cor_MIP_image  = ImageTk.PhotoImage(image=Image.fromarray(Cor_MIP).resize((320,120)))
-Cor_MIP_Label  = Label(image=Cor_MIP_image)
+Cor_MIP_Label     = Label(image=Cor_MIP_image)
 
 
 
@@ -266,7 +303,8 @@ button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button
 slider_slices        = Scale  (root, from_= 0, to= slices-1 ,     command=slider_slices2)
 
 myLabel.grid(row=1, column=1,columnspan=7)
-#segLabel.grid(row=1,column=8)
+segLabel           = Label(image=myImage)
+segLabel.grid(row=1,column=8)
 
 Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
 Sag_MIP_Label.grid(row=3, column=8,columnspan=1) 
