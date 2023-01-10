@@ -8,6 +8,8 @@ Created on Mon Dec 12 14:45:27 2022
 from tkinter import *
 from PIL import ImageTk, Image, ImageEnhance
 from segment_CircleOfWillis import segment_CircleOfWillis
+from tkinterhtml import HtmlFrame
+from tkhtmlview  import HTMLLabel, RenderHTML
 
 import plotly.graph_objects as go
 import os
@@ -167,13 +169,28 @@ def button_read():
     global Sag_MIP_Label
     global Cor_MIP_Label    
     global maxLabel
+    global vasculature0
+    global segImage
+    global segLabel
     
     filename  = askopenfilename() # show an "Open" dialog box and return the path to the selected file
     img       = nib.load(filename)
     fileLabel = Label(root, text=filename,bd=1, relief=SUNKEN).grid(row = 0, column=8,columnspan=2);
     data      = img.get_fdata()
-    first_number = int(e.get())
-    slice_2   = data[:, :, int(e.get())]
+    new_number = int(e.get())
+    slice_2   = data[:, :, new_number]
+    
+    new_name = filename[:-3]+'npy'
+    segmentation_exists = os.path.exists(new_name)
+   
+    if (segmentation_exists):
+        vasculature0=np.load(new_name)
+    else:
+        # copy the data to a new variable, that will be updated with the segmentation
+        vasculature0=data/250
+
+    
+    
     myLabel.grid_forget()
 
     # replace image with new file
@@ -206,6 +223,11 @@ def button_read():
     dims     = data.shape
     slices   = dims[2]
     maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
+    
+    slice_3        = 250*vasculature0[:, :, new_number]
+    segImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
+    segLabel       = Label(image=segImage)
+    segLabel.grid(row=1, column=8)
 
 
 def segment_data():
@@ -237,29 +259,35 @@ def segment_data():
 
 
 
-# start the window here    
+#   ********* start the window here  ***********  
 root = Tk()
 root.title("Circle of Willis")
 root.iconbitmap('CircleW.ico')
 
-
+# Read the file, open a window to read the file
 
 #Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
 filename = askopenfilename(title="Select the *.nii file",filetypes=(("nifti files","*.nii"),("all files","*.*"))) # show an "Open" dialog box and return the path to the selected file
-#
-#img      = nib.load('TPH-001_V1.nii')
+
 if filename:
     print(filename)
 else:
     print(" No file Selected")    
     #root.destroy()
 
-
+# read the nifty file
 img      = nib.load(filename)
-
-
 data     = img.get_fdata()
-vasculature0=data/250
+
+# check if there is already a segmentation of this file
+new_name = filename[:-3]+'npy'
+segmentation_exists = os.path.exists(new_name)
+   
+if (segmentation_exists):
+    vasculature0=np.load(new_name)
+else:
+    # copy the data to a new variable, that will be updated with the segmentation
+    vasculature0=data/250
 
 dims     = data.shape
 slices   = dims[2]
@@ -291,9 +319,10 @@ Cor_MIP= np.max(data, axis=0)
 Sag_MIP = np.rot90(Sag_MIP, k=3, axes=(1,0))
 Cor_MIP = np.rot90(Cor_MIP, k=3, axes=(1,0))
 
-
-slice_2 = data[:, :, int(e.get())]
-
+first_number = int(e.get())
+slice_2 = data[:, :, first_number]
+slice_3 = 250*vasculature0[:, :, first_number]
+  
 #*********** Calculate the vasculature here ********
 #vasculature0 = segment_CircleOfWillis(data)
 #rows,cols,levs = vasculature0.shape
@@ -315,11 +344,15 @@ slice_2 = data[:, :, int(e.get())]
 
 
 myImage           = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
+segImage          = ImageTk.PhotoImage(image=Image.fromarray(slice_3).resize((320,320)))
 Ax_MIP_image      = ImageTk.PhotoImage(image=Image.fromarray(Ax_MIP).resize((320,320)))
 Sag_MIP_image     = ImageTk.PhotoImage(image=Image.fromarray(Sag_MIP).resize((320,120)))
 Cor_MIP_preImage  = Image.fromarray(Cor_MIP).resize((320,120))
 Cor_MIP_image     = ImageTk.PhotoImage(image=Cor_MIP_preImage)
 #vasc_image        = ImageTk.PhotoImage(image=vasc_pre_image)
+
+
+
 
 myLabel           = Label(image=myImage)
 Ax_MIP_Label      = Label(image=Ax_MIP_image)
@@ -340,7 +373,7 @@ button_down_double   = Button (root, text = "<<",padx=10,pady=10, command=button
 slider_slices        = Scale  (root, from_= 0, to= slices-1 ,     command=slider_slices2)
 
 myLabel.grid(row=1, column=1,columnspan=7)
-segLabel           = Label(image=myImage)
+segLabel           = Label(image=segImage)
 segLabel.grid(row=1,column=8)
 
 Ax_MIP_Label.grid(row=3, column=1,columnspan=7) 
@@ -357,6 +390,22 @@ minLabel = Label(root, text="0").grid(row = 2, column=3)
 maxLabel = Label(root, text=slices-1).grid(row = 2, column=5)
 
 
+html_name = filename[:-3]+'html'
+html_exists = os.path.exists(html_name)
+print(html_name)
+print(html_exists)
+
+if (html_exists):
+    html_label = HTMLLabel(root, RenderHTML(html_name))
+    html_label.grid(row=1,column=9)
+
+
+#html_label.pack(fill="both", expand=True)
+#html_label.fit_height()
+
+#frame = HtmlFrame(root, horizontal_scrollbar="auto")
+#frame.set_content("<html></html>")
+#frame.grid(row=1,column=9)
 
 #myImage = ImageTk.PhotoImage(slice_2)
 #myLabel.pack()
