@@ -13,7 +13,7 @@ function handleFig = display_CircleOfWillis(vasculature)
         title(vasculature.name,'interpreter','none')
     end
     colormap bone
-    
+    h131.View = [90 90];
    % sld = uislider(handleFig,'Position',[50 50 150 3]);
     b = uicontrol('Parent',handleFig,'Style','slider','Position',[100,32,200,20],...
         'value',1, 'min',1, 'max',vasculature.numSlices,'tag','sliceSlider','callback',...
@@ -41,6 +41,7 @@ function handleFig = display_CircleOfWillis(vasculature)
 
     h331=subplot(332);
     imagesc((max(vasculature.rawData,[],3)));        axis tight;    axis equal
+    h331.View = [ 90 90];
     h332=subplot(335);
     imagesc((max(sagD,[],3)));        axis tight;    axis equal; axis xy
     h333=subplot(338);
