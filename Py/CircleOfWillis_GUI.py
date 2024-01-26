@@ -38,7 +38,7 @@ def slider_slices2(self):
     e.insert(0,1+(first_number))
     new_number = int(e.get())
 
-    slice_2 = data[:, :, new_number]
+    slice_2       = data[:, :, new_number]
     myImage       = ImageTk.PhotoImage(image=Image.fromarray(slice_2).resize((320,320)))
     myLabel       = Label(image=myImage)
     myLabel.grid(row=1, column=1,columnspan=7)
