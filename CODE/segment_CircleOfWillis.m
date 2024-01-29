@@ -120,6 +120,7 @@ vasculature.scaledData      = uint8(255*vasculature.rawData/(0.9*maxIntensityRaw
 %%
 if numel(baseProps2) ==1
     % Single case, all sides are connected
+    mainRegions =1; numRegions = 1;
 else
     % two or more, most likely 2 or 3, discard small specs
     [topAreas,topRegions] = sort([baseProps2.Area],'descend');
