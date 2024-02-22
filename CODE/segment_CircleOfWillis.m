@@ -1,10 +1,11 @@
-function [vasculature] = segment_CoW (currFileData,toDisplay) 
+function [vasculature] = segment_CircleOfWillis (currFileData,toDisplay) 
 
 %% Parse input
 % Data can be the filename, the actual NIFTY data 
 if isa(currFileData,'char')
     currFileDataName = currFileData;
-    currFileData=niftiread(currFileDataName);   
+    currFileData    = niftiread(currFileDataName);   
+    currFileInfo    = niftiinfo(currFileDataName);
 end
 
 if ~exist('currFileDataName','var')
@@ -95,6 +96,7 @@ vasculature.numBranchPoints = sum(vasculature.branchPoints(:));
 vasculature.name            = currFileDataName;
 vasculature.vesselLength    = sum(vasculature.skeleton(:));
 vasculature.rawData         = currFileData;
+vasculature.info            = currFileInfo;
 vasculature.numSlices       = levs;
 % Analyse if the three main elements in the base are connected or not
 %%
