@@ -1,6 +1,6 @@
-function handleFig2 = display_CircleThickness(vasculature)
+function vasculature = display_CircleThickness(vasculature)
 
-if isa('vasculature','char')
+if isa(vasculature,'char')
     vasculature = segment_CircleOfWillis (vasculature,0); 
 end
 vasculatureThick    = bwdist(vasculature.vessels==0);
@@ -17,7 +17,7 @@ if ~isfield(vasculature,'info')
 else
     scalingFactor       = vasculature.info.PixelDimensions(1);
 end
-[f,v,c]   = isosurface(vasculatureThick2,0.05,scalingFactor*imdilate(vasculatureThick2,ones(5)));
+[f,v,c]   = isosurface(vasculatureThick2,0.05,2*scalingFactor*imdilate(vasculatureThick2,ones(5)));
 
 handleFig2=figure;
 patch('Vertices',v,'Faces',f,'FaceVertexCData',c,'FaceColor','interp','EdgeColor','interp')
