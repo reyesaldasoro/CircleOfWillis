@@ -1,4 +1,4 @@
-function handleFig2 = displayCircleThickness(vasculature)
+function handleFig2 = display_CircleThickness(vasculature)
 
 if isa('vasculature','char')
     vasculature = segment_CircleOfWillis (vasculature,0); 
