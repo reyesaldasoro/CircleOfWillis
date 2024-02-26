@@ -13,7 +13,9 @@ function handleFig = display_CircleOfWillis(vasculature)
         title(vasculature.name,'interpreter','none')
     end
     colormap bone
-    h131.View = [90 90];
+    % Correct the axial view
+    h131.View = [-90 -90];
+    %h131.View = [90 90];
    % sld = uislider(handleFig,'Position',[50 50 150 3]);
     b = uicontrol('Parent',handleFig,'Style','slider','Position',[100,32,200,20],...
         'value',1, 'min',1, 'max',vasculature.numSlices,'tag','sliceSlider','callback',...
@@ -41,7 +43,9 @@ function handleFig = display_CircleOfWillis(vasculature)
 
     h331=subplot(332);
     imagesc((max(vasculature.rawData,[],3)));        axis tight;    axis equal
-    h331.View = [ 90 90];
+    % correct the axial view
+    h331.View = [- 90 -90];
+    %h331.View = [ 90 90];
     h332=subplot(335);
     imagesc((max(sagD,[],3)));        axis tight;    axis equal; axis xy
     h333=subplot(338);
@@ -53,11 +57,12 @@ function handleFig = display_CircleOfWillis(vasculature)
     
     h133=subplot(133);
     se = strel('sphere',2);
+    % to correct orientation of the axial planes, change 1:end, to end:-1:1
     if isfield(vasculature,'mainRegions')
         fColor = [1 0 0; 0 0 1; 0 1 1;1 1 0;1 0 1;0.5 0.5 1;0.5 1 0.5];
-        [f,v]   = isosurface(vasculature.vessels,0.05);
-        [f2,v2] = isosurface(vasculature.skeleton,0.05);
-        [f3,v3] = isosurface(imdilate(vasculature.branchPoints,se),0.05);
+        [f,v]   = isosurface(vasculature.vessels(end:-1:1,:,:),0.05);
+        [f2,v2] = isosurface(vasculature.skeleton(end:-1:1,:,:),0.05);
+        [f3,v3] = isosurface(imdilate(vasculature.branchPoints(end:-1:1,:,:),se),0.05);
         
        % hPatch  = patch('Faces',f,'Vertices',v,'edgecolor','none','facecolor',0.7*[1 1 1]);
         hPatch2 = patch('Faces',f2,'Vertices',v2,'edgecolor','none','facecolor','k');
@@ -65,7 +70,7 @@ function handleFig = display_CircleOfWillis(vasculature)
         hPatch.FaceAlpha = 0.2;
         k2=0;
         for k=1:vasculature.totRegions
-            [fr,vr]= isosurface(vasculature.vesselsL==k,0.05);
+            [fr,vr]= isosurface(vasculature.vesselsL(end:-1:1,:,:)==k,0.05);
             if isempty(intersect(k,vasculature.mainRegions))      
                 hPatch4 = patch('Faces',fr,'Vertices',vr,'edgecolor','none','facecolor',0.7*[1 1 1]);
             else
@@ -80,9 +85,9 @@ function handleFig = display_CircleOfWillis(vasculature)
         
         
     else
-        [f,v]   = isosurface(vasculature.vessels,0.05);
-        [f2,v2] = isosurface(vasculature.skeleton,0.05);
-        [f3,v3] = isosurface(imdilate(vasculature.branchPoints,se),0.05);
+        [f,v]   = isosurface(vasculature.vessels(end:-1:1,:,:),0.05);
+        [f2,v2] = isosurface(vasculature.skeleton(end:-1:1,:,:),0.05);
+        [f3,v3] = isosurface(imdilate(vasculature.branchPoints(end:-1:1,:,:),se),0.05);
         
         %subplot(122)
         hPatch = patch('Faces',f,'Vertices',v,'edgecolor','none','facecolor','r');
